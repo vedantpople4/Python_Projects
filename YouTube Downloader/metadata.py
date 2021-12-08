@@ -7,8 +7,6 @@ def video(yt):
     print('Video Rating: ', round(yt.rating))
     print('Thumbnail URL: ', yt.thumbnail_url)
 
-
-
 link = "https://www.youtube.com/watch?v=WGQF0XYxE2U"
 yt = YouTube(link)
 
