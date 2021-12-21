@@ -38,3 +38,19 @@ class App(tk.Tk):
     def clear_all(self):
         self.canvas.delete("all")
         
+    def classify_handwriting(self):
+        HWND = self.canvas.winfo_id()
+        rect = win32gui.GetWindowRect(HWND)
+        im = ImageGrab.grab(rect)
+
+        digit, acc = predict_digit(im)
+        self.label.configure(text=str(digit)+', '+str(int(acc*100))+'%')
+
+    def draw_lines(self,event):
+        self.x = event.x
+        self.y = event.y
+        r = 8
+        self.canvas.create_oval(self.x-r, self.y-r, self.x+r, self.y+r, fill='black')
+
+app = App()
+mainloop()
