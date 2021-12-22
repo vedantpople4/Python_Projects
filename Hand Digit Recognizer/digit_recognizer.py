@@ -13,9 +13,9 @@ def predict_digit(img):
     img = img.convert('L')
     img = np.array(img)
     img = img.reshape(1,28,28,1)
-    img/=255.0
-    res = model.predict([img])[0]
-    return np.argmax(res), max[res]
+    img = img/255.0
+    res = model.predict(img)[0]
+    return np.argmax(res), max(res)
 
 class App(tk.Tk):
     def __init__(self):
@@ -32,7 +32,7 @@ class App(tk.Tk):
         self.classify_btn.grid(row=1, column=1, pady=2, padx=2)
         self.button_clear.grid(row=1, column=0, pady=2)
 
-        self.canvas.bind("<B1-Motion">, self.draw_lined)
+        self.canvas.bind("<B1-Motion>", self.draw_lines)
 
 
     def clear_all(self):

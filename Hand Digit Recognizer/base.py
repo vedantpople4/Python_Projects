@@ -8,7 +8,7 @@ from keras import backend as K
 
 batch_size = 128
 num_classes = 10
-epochs = 20
+epochs = 10
 
 (x_train, y_train) , (x_test, y_test) = mnist.load_data()
 print(x_train.shape, y_train.shape)
