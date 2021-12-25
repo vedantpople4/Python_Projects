@@ -15,12 +15,12 @@ x_test = x_test / 255
 
 y_train = np_utils.to_categorical(y_train)
 y_test = np_utils.to_categorical(y_test)
-#num_classes = y_test[1]
+num_classes = y_test.shape[1]
 
 def baseline_model():
     model = Sequential()
     model.add(Dense(num_pixels, input_dim=num_pixels, kernel_initializer='normal', activation='relu'))
-    model.add(Dense(y_train[1], kernel_initializer='normal', activation='softmax'))
+    model.add(Dense(num_classes, kernel_initializer='normal', activation='softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
