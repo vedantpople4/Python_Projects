@@ -1,56 +1,45 @@
-from keras.models import load_model
-from tkinter import *
-import tkinter as tk
-from numpy.lib.arraypad import pad
-import win32gui
-from PIL import ImageGrab, Image
 import numpy as np
+import cv2
+from skimage import img_as_ubyte    
+from skimage.color import rgb2gray
+from keras.models import load_model
+
+width = 640
+height = 480
+cameraNo = 0
+ 
+cap = cv2.VideoCapture(cameraNo)
+cap.set(3,width)
+cap.set(4,height)
 
 model = load_model('mnist.h5')
 
-def predict_digit(img):
-    img = img.resize((28,28))
-    img = img.convert('L')
-    img = np.array(img)
-    img = img.reshape(1,28,28,1)
-    img = img/255.0
-    res = model.predict(img)[0]
-    return np.argmax(res), max(res)
+while True:
+  success, im_orig = cap.read()
 
-class App(tk.Tk):
-    def __init__(self):
-        tk.Tk.__init__(self)
-        self.x = self.y = 0
+img_gray = rgb2gray(img_original)
+img_gray_u8 = img_as_ubyte(img_gray)
 
-        self.canvas = tk.Canvas(self, width=300, height=300, bg="white", cursor="cross")
-        self.label = tk.Label(self, text="Thinking..", font=("Helvetica", 48))
-        self.classify_btn = tk.Button(self, text="Recognize", command=self.classify_handwriting)
-        self.button_clear = tk.Button(self, text="Clear", command=self.clear_all)
+(thresh, im_binary) = cv2.threshold(img_gray_u8, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+img_resized = cv2.resize(im_binary,(28,28))
+im_gray_invert = 255 - img_resized
+cv2.imshow("invert image", im_gray_invert)
 
-        self.canvas.grid(row=0, column=0, pady=2, sticky=W)
-        self.canvas.grid(row=0, column=1, pady=2, padx=2)
-        self.classify_btn.grid(row=1, column=1, pady=2, padx=2)
-        self.button_clear.grid(row=1, column=0, pady=2)
+im_final = im_gray_invert.reshape(1,28,28,1)
+ans = model.predict(im_final)
 
-        self.canvas.bind("<B1-Motion>", self.draw_lines)
+ans = np.argmax(ans,axis=1)[0]
+print(ans)
 
-
-    def clear_all(self):
-        self.canvas.delete("all")
-        
-    def classify_handwriting(self):
-        HWND = self.canvas.winfo_id()
-        rect = win32gui.GetWindowRect(HWND)
-        im = ImageGrab.grab(rect)
-
-        digit, acc = predict_digit(im)
-        self.label.configure(text=str(digit)+', '+str(int(acc*100))+'%')
-
-    def draw_lines(self,event):
-        self.x = event.x
-        self.y = event.y
-        r = 8
-        self.canvas.create_oval(self.x-r, self.y-r, self.x+r, self.y+r, fill='black')
-
-app = App()
-mainloop()
+cv2.putText(img_original,'Predicted Digit : '+str(ans),
+                    (50,50),cv2.FONT_HERSHEY_COMPLEX,
+                    1,(0,0,255),1)
+cv2.imshow("Original Image",img_original)
+while True:
+    k = cv2.waitKey(0) & 0xFF
+    print(k)
+    if k == 27:
+        cv2.destroyAllWindows()
+        break
+    
+cap.release()
