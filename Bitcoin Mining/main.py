@@ -10,20 +10,21 @@ def mine(block_number, transactions, previous_hash, prefix_zeros):
         text = str(block_number) + transactions + previous_hash + str(nonce)
         new_hash = SHA256(text)
         if new_hash.startswith(prefix_str):
-            print("Mined Bitcoin with nonce value: ", {nonce})
+            print(f"Yay! Successfully mined bitcoins with nonce value:{nonce}")
             return new_hash
 
-    raise BaseException("Couldnt find correct has after trying {MAX_NONCE} times")
+    raise BaseException(f"Couldn't find correct has after trying {MAX_NONCE} times")
 
-if __name__ =='__main__':
-    transactions= A->B->20,
-    F->G->40 
-    difficulty = 4
-
+if __name__=='__main__':
+    transactions='''
+    Vedant->Devendra->20,
+    Mando->Rakshit->45
+    '''
+    difficulty=4 # try changing this to higher number and you will see it will take more time for mining as difficulty increases
     import time
     start = time.time()
     print("start mining")
-    new_hash = mine(5, transactions, '6b88c087247aa2f07ee1c5956b8e1a9f4c7f892a70e324f1bb3d161e05ca107b', difficulty)
-    total_time = str((time.time() - start()))
-    print("End Mining, Mining took: {total_time} seconds")
+    new_hash = mine(5,transactions,'0000000xa036944e29568d0cff17edbe038f81208fecf9a66be9a2b8321c6ec7', difficulty)
+    total_time = str((time.time() - start))
+    print(f"end mining. Mining took: {total_time} seconds")
     print(new_hash)
