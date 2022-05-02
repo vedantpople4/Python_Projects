@@ -10,6 +10,6 @@ def video(yt):
     video.download()
     print("Video is downloading as ", yt.title + ".mp")
 
-link = "https://www.youtube.com/watch?v=WGQF0XYxE2U"
+link = "https://www.youtube.com/watch?v=k2aeH0xPMew"
 yt = YouTube(link)
 video(yt)
